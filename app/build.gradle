@@ -52,19 +52,17 @@ android {
     }
 
     dataBinding.enabled = true
-
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
-
 
 dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     endpointsServer project(path: ':backend', configuration: 'endpoints')
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.google.android.gms:play-services-ads:11.8.0'
+    freeImplementation 'com.google.android.gms:play-services-ads:11.8.0'
     implementation 'com.google.api-client:google-api-client:1.23.0'
     implementation 'com.google.http-client:google-http-client-android:1.23.0'
     implementation 'com.google.code.findbugs:jsr305:2.0.1'
@@ -80,7 +78,6 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
 
-    implementation project(':javaJokes')
     implementation project(':androidlibrary')
     implementation 'com.google.appengine:appengine-api-1.0-sdk:1.9.56'
 

@@ -3,7 +3,6 @@ package com.udacity.gradle.builditbigger;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.android.gms.ads.InterstitialAd;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -17,12 +16,11 @@ import java.io.IOException;
  */
 
 public class EndpointsAsyncTask extends AsyncTask<onJokeReceived, Void, String> {
-    private static final String LOG_TAG = EndpointsAsyncTask.class.getSimpleName();
+    private final String LOG_TAG = EndpointsAsyncTask.class.getSimpleName();
     private static MyApi myApiService = null;
     private onJokeReceived listener;
-    private InterstitialAd mInterstitialAd;
 
-    EndpointsAsyncTask() {
+    public EndpointsAsyncTask() {
     }
 
     @Override
@@ -55,7 +53,8 @@ public class EndpointsAsyncTask extends AsyncTask<onJokeReceived, Void, String> 
         try {
             return myApiService.getJoke().execute().getData();
         } catch (IOException e) {
-            return e.getMessage();
+             Log.e(LOG_TAG, e.getMessage(), e);
+            return null;
         }
     }
 
@@ -63,6 +62,7 @@ public class EndpointsAsyncTask extends AsyncTask<onJokeReceived, Void, String> 
     protected void onPostExecute(final String result) {
         super.onPostExecute(result);
         if (!result.isEmpty()){
+            Log.w(LOG_TAG, "onPostExecute NOT NULL " + result);
             listener.OnJokeReceivedListener(result);
         }else {
             Log.w(LOG_TAG, "onPostExecute NULL " + result);

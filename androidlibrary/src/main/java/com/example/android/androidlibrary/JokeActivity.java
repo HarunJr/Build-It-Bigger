@@ -6,9 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.android.androidlibrary.databinding.ActivityJokeBinding;
 
-import static com.example.android.javajokes.Joker.JOKE_KEY;
-
 public class JokeActivity extends AppCompatActivity {
+    public static final String JOKE_KEY = "javaJoke";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

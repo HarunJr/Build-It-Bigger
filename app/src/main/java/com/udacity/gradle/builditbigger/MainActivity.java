@@ -10,17 +10,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.example.android.androidlibrary.JokeActivity;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-//import com.udacity.gradle.builditbigger.paid.MainActivityFragment;
-import com.udacity.gradle.builditbigger.free.MainActivityFragment;
 
-import static com.example.android.javajokes.Joker.JOKE_KEY;
-
-public class MainActivity extends AppCompatActivity implements MainActivityFragment.OnJokeButtonListener{
+public class MainActivity extends AppCompatActivity implements OnJokeButtonListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private InterstitialAd mInterstitialAd;
     private ProgressBar mProgressBar = null;
 
     @Override
@@ -28,7 +20,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
-        addFragment();
     }
 
     @Override
@@ -52,94 +43,38 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         return super.onOptionsItemSelected(item);
     }
 
-    private void addFragment(){
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, new MainActivityFragment())
-                .commit();
-    }
+//    private void addFragment(){
+//        getSupportFragmentManager().beginTransaction()
+//                .add(R.id.fragment_container, new MainActivityFragment())
+//                .commit();
+//    }
 
     @Override
-    public void onJokeButtonClicked(final boolean isPaid) {
-        if (!isPaid){
-            initialiseInterstitialAd();
-        }
-        progressVisible();
-        new EndpointsAsyncTask().execute(new onJokeReceived() {
-            @Override
-            public void OnJokeReceivedListener(final String joke) {
-                if (!joke.isEmpty()){
-                    if (mInterstitialAd != null){
-                        selectAdOptions(joke);
-                    }else {
-                        progressGone();
-                        startJokeActivity(joke);
-                    }
-                }
-            }
-        });
+    public void onJokeButtonClicked(String joke) {
+        Log.w(LOG_TAG, "onJokeButtonClicked");
+        startJokeActivity(joke);
     }
 
     private void startJokeActivity(String joke){
-        startActivity(new Intent(getApplicationContext(), JokeActivity.class)
-                .putExtra(JOKE_KEY, joke));
+        startActivity(new Intent(getBaseContext(), JokeActivity.class)
+                .putExtra(JokeActivity.JOKE_KEY, joke));
     }
 
-    private void selectAdOptions(final String joke){
-        mInterstitialAd.setAdListener(new AdListener(){
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                progressGone();
-                showAd(mInterstitialAd);
-            }
+//    public ProgressBar getProgressBar() {
+//        return mProgressBar;
+//    }
 
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                progressGone();
-                startJokeActivity(joke);
-            }
-
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-                startJokeActivity(joke);
-            }
-        });
-    }
-
-    private void progressVisible() {
+    public void progressVisible() {
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
-    private void progressGone(){
+    public void progressGone(){
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }
     }
 
-    private void showAd(InterstitialAd mInterstitialAd){
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-            Log.w(LOG_TAG, "mInterstitialAd.show");
-        } else {
-            Log.w(LOG_TAG, "The interstitial wasn't loaded yet.");
-        }
-    }
 
-    private void initialiseInterstitialAd() {
-        mInterstitialAd = new InterstitialAd(getBaseContext());
-        mInterstitialAd.setAdUnitId(this.getString(R.string.interstitial_ad_unit_id));
-        loadInterstitialAd();
-    }
-
-    private void loadInterstitialAd() {
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-
-        mInterstitialAd.loadAd(adRequest);
-    }
 }

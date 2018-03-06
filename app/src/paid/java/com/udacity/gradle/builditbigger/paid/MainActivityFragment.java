@@ -9,8 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.udacity.gradle.builditbigger.EndpointsAsyncTask;
+import com.udacity.gradle.builditbigger.MainActivity;
+import com.udacity.gradle.builditbigger.OnJokeButtonListener;
 import com.udacity.gradle.builditbigger.R;
 import com.udacity.gradle.builditbigger.databinding.FragmentMainBinding;
+import com.udacity.gradle.builditbigger.onJokeReceived;
 
 
 /**
@@ -35,21 +39,30 @@ public class MainActivityFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onJokeButtonClicked(IS_PAID);
+                onJokeButtonClicked();
             }
         });
 
         return root;
     }
 
-    private void onJokeButtonClicked(boolean isPaid){
+    private void onJokeButtonClicked(){
+        ((MainActivity) getActivity()).progressVisible();
         if (jokeButtonListener != null){
-            jokeButtonListener.onJokeButtonClicked(isPaid);
+            initNetworkConnection();
         }
     }
 
-    public interface OnJokeButtonListener {
-        void onJokeButtonClicked(boolean isPaid);
+    private void initNetworkConnection() {
+        new EndpointsAsyncTask().execute(new onJokeReceived() {
+            @Override
+            public void OnJokeReceivedListener(final String joke) {
+                if (!joke.isEmpty()) {
+                    ((MainActivity) getActivity()).progressGone();
+                    jokeButtonListener.onJokeButtonClicked(joke);
+                }
+            }
+        });
     }
 
     @Override
@@ -62,6 +75,4 @@ public class MainActivityFragment extends Fragment {
                     + " must implement OnJokeButtonListener");
         }
     }
-
-
 }
